@@ -22,9 +22,15 @@ namespace bus_Sation_API.Controllers
             return _context.BusRoutes.ToList();
         }
 
-        [HttpPost("routes")]
-        public ActionResult<BusRoute> AddRoute(BusRoute route)
+        [HttpPost("routes/{departureLocation}/{destination}/{departureTime}")]
+        public ActionResult<BusRoute> AddRoute(string departureLocation, string destination, string departureTime)
         {
+            BusRoute route = new BusRoute
+            {
+                DepartureLocation = departureLocation,
+                Destination = destination,
+                DepartureTime = departureTime
+            };
             _context.BusRoutes.Add(route);
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetRouteById), new { id = route.Id }, route);
@@ -42,8 +48,8 @@ namespace bus_Sation_API.Controllers
             return route;
         }
 
-        [HttpPut("routes/{id}")]
-        public IActionResult UpdateRoute(int id, BusRoute updatedRoute)
+        [HttpPut("routes/{id}/{departureLocation}/{destination}/{departureTime}")]
+        public IActionResult UpdateRoute(int id, string departureLocation, string destination, string departureTime)
         {
             BusRoute routeToUpdate = _context.BusRoutes.FirstOrDefault(r => r.Id == id);
             if (routeToUpdate == null)
@@ -51,13 +57,13 @@ namespace bus_Sation_API.Controllers
                 return NotFound();
             }
 
-            routeToUpdate.DepartureLocation = updatedRoute.DepartureLocation;
-            routeToUpdate.Destination = updatedRoute.Destination;
-            routeToUpdate.DepartureTime = updatedRoute.DepartureTime;
+            routeToUpdate.DepartureLocation = departureLocation;
+            routeToUpdate.Destination = destination;
+            routeToUpdate.DepartureTime = departureTime;
 
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok();
         }
 
 
@@ -73,7 +79,7 @@ namespace bus_Sation_API.Controllers
             _context.BusRoutes.Remove(routeToDelete);
             _context.SaveChanges();
 
-            return NoContent();
+            return Ok();
         }
     }
 }

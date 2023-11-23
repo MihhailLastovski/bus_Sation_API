@@ -7,6 +7,7 @@
         public string Destination { get; set; }
         public string DepartureTime { get; set; }
 
+        public BusRoute() { }
         public BusRoute(string departureLocation, string destination, string departureTime)
         {
             DepartureLocation = departureLocation;

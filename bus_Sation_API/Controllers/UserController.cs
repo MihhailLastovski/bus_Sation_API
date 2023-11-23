@@ -17,36 +17,36 @@ namespace bus_Sation_API.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
-        public IActionResult Register(User userData)
+        [HttpPost("register/{username}/{password}/{role}")]
+        public IActionResult Register(string username, string password, string role)
         {
-            if (_context.Users.Any(u => u.Username == userData.Username))
+            if (_context.Users.Any(u => u.Username == username))
             {
                 return Conflict(new { message = "User already exists" });
             }
 
             User newUser = new User
             {
-                Username = userData.Username,
-                Password = HashPassword(userData.Password),
-                Role = userData.Role
+                Username = username,
+                Password = HashPassword(password),
+                Role = role
             };
 
             _context.Users.Add(newUser);
             _context.SaveChanges();
-            return Ok(newUser.Id);
+            return Ok(new { message = "User registered successfully" });
         }
 
-        [HttpPost("login")]
-        public IActionResult Login(User loginData)
+        [HttpPost("login/{username}/{password}")]
+        public IActionResult Login(string username, string password)
         {
-            User user = _context.Users.FirstOrDefault(u => u.Username == loginData.Username);
+            User user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user == null)
             {
                 return NotFound(new { message = "User not found" });
             }
 
-            string hashedPassword = HashPassword(loginData.Password);
+            string hashedPassword = HashPassword(password);
             if (user.Password != hashedPassword)
             {
                 return Unauthorized(new { message = "Invalid password" });
