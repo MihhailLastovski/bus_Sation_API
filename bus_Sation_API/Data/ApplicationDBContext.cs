@@ -7,7 +7,7 @@ namespace bus_Sation_API.Data
     {
         public DbSet<BusRoute> BusRoutes { get; set; }
         public DbSet<User> Users { get; set; }
-
+        public DbSet<Logs> Logs { get; set; }
         public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options) : base(options)
         {
 

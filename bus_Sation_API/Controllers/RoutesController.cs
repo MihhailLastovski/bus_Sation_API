@@ -22,8 +22,8 @@ namespace bus_Sation_API.Controllers
             return _context.BusRoutes.ToList();
         }
 
-        [HttpPost("routes/{departureLocation}/{destination}/{departureTime}")]
-        public ActionResult<BusRoute> AddRoute(string departureLocation, string destination, string departureTime)
+        [HttpPost("routes/{departureLocation}/{destination}/{departureTime}/{username}")]
+        public ActionResult<BusRoute> AddRoute(string departureLocation, string destination, string departureTime, string username)
         {
             BusRoute route = new BusRoute
             {
@@ -33,6 +33,7 @@ namespace bus_Sation_API.Controllers
             };
             _context.BusRoutes.Add(route);
             _context.SaveChanges();
+            LogAction($"AddRoute: {route.Id} Id", username); 
             return CreatedAtAction(nameof(GetRouteById), new { id = route.Id }, route);
         }
 
@@ -48,8 +49,8 @@ namespace bus_Sation_API.Controllers
             return route;
         }
 
-        [HttpPut("routes/{id}/{departureLocation}/{destination}/{departureTime}")]
-        public IActionResult UpdateRoute(int id, string departureLocation, string destination, string departureTime)
+        [HttpPut("routes/{id}/{departureLocation}/{destination}/{departureTime}/{username}")]
+        public IActionResult UpdateRoute(int id, string departureLocation, string destination, string departureTime, string username)
         {
             BusRoute routeToUpdate = _context.BusRoutes.FirstOrDefault(r => r.Id == id);
             if (routeToUpdate == null)
@@ -62,13 +63,12 @@ namespace bus_Sation_API.Controllers
             routeToUpdate.DepartureTime = departureTime;
 
             _context.SaveChanges();
-
+            LogAction($"UpdateRoute: {routeToUpdate.Id} Id", username); 
             return Ok();
         }
 
-
-        [HttpDelete("routes/{id}")]
-        public IActionResult DeleteRoute(int id)
+        [HttpDelete("routes/{id}/{username}")]
+        public IActionResult DeleteRoute(int id, string username)
         {
             BusRoute routeToDelete = _context.BusRoutes.FirstOrDefault(r => r.Id == id);
             if (routeToDelete == null)
@@ -78,8 +78,20 @@ namespace bus_Sation_API.Controllers
 
             _context.BusRoutes.Remove(routeToDelete);
             _context.SaveChanges();
-
+            LogAction($"DeleteRoute: {routeToDelete.Id} Id", username); 
             return Ok();
+        }
+
+        private void LogAction(string action, string username)
+        {
+            Logs log = new Logs
+            {
+                Action = action,
+                Username = username,
+                Timestamp = DateTime.Now
+            };
+            _context.Logs.Add(log);
+            _context.SaveChanges();
         }
     }
 }
