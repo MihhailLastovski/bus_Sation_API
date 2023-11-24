@@ -22,14 +22,17 @@ namespace bus_Sation_API.Controllers
             return _context.BusRoutes.ToList();
         }
 
-        [HttpPost("routes/{departureLocation}/{destination}/{departureTime}/{username}")]
-        public ActionResult<BusRoute> AddRoute(string departureLocation, string destination, string departureTime, string username)
+        [HttpPost("routes/{departureLocation}/{destination}/{departureTime}/{username}/{destinationTime}/{busCompany}/{tickets}")]
+        public ActionResult<BusRoute> AddRoute(string departureLocation, string destination, string departureTime, string username, string destinationTime, string busCompany, int tickets)
         {
             BusRoute route = new BusRoute
             {
                 DepartureLocation = departureLocation,
                 Destination = destination,
-                DepartureTime = departureTime
+                DepartureTime = departureTime,
+                DestinationTime = destinationTime,
+                BusCompany = busCompany,
+                TicketsCount = tickets
             };
             _context.BusRoutes.Add(route);
             _context.SaveChanges();
@@ -49,8 +52,8 @@ namespace bus_Sation_API.Controllers
             return route;
         }
 
-        [HttpPut("routes/{id}/{departureLocation}/{destination}/{departureTime}/{username}")]
-        public IActionResult UpdateRoute(int id, string departureLocation, string destination, string departureTime, string username)
+        [HttpPut("routes/{id}/{departureLocation}/{destination}/{departureTime}/{username}/{destinationTime}/{busCompany}/{tickets}")]
+        public IActionResult UpdateRoute(int id, string departureLocation, string destination, string departureTime, string username, string destinationTime, string busCompany, int tickets)
         {
             BusRoute routeToUpdate = _context.BusRoutes.FirstOrDefault(r => r.Id == id);
             if (routeToUpdate == null)
@@ -61,6 +64,9 @@ namespace bus_Sation_API.Controllers
             routeToUpdate.DepartureLocation = departureLocation;
             routeToUpdate.Destination = destination;
             routeToUpdate.DepartureTime = departureTime;
+            routeToUpdate.DestinationTime = destinationTime;
+            routeToUpdate.BusCompany = busCompany;
+            routeToUpdate.TicketsCount = tickets;
 
             _context.SaveChanges();
             LogAction($"UpdateRoute: {routeToUpdate.Id} Id", username); 
